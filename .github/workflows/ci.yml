@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate (Python ${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.10', '3.12', '3.13']
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Validate skill metadata
+        run: python tests/validate_skill.py .
+      - name: Compile Python sources
+        run: python -m compileall -q scripts tests
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Check CLI help
+        run: |
+          python scripts/official_docx.py --help
+          python scripts/verify_official_docx.py --help
+
+  package-check:
+    name: Package hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+      - name: Reject generated or sensitive artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f README.md
+          test -f LICENSE
+          test -f SECURITY.md
+          test -f CONTRIBUTING.md
+          ! find . -type f \( -name '*.pyc' -o -name '*.pyo' -o -name '*.docx' -o -name '*.pdf' -o -name '*.png' \) -print -quit | grep -q .

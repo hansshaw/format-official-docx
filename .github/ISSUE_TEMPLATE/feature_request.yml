@@ -1,0 +1,30 @@
+name: 功能建议
+description: 建议新的公文规则、兼容能力或工作流改进
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 使用场景
+      description: 说明当前工作流无法满足的具体需求。
+    validations:
+      required: true
+  - type: textarea
+    id: rule
+    attributes:
+      label: 建议规则
+      description: 提供格式参数、适用边界及可公开引用的依据。
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: 兼容性影响
+      description: 是否会改变现有 CLI、审计结果或已生成文档。
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 已考虑的替代方案
+

@@ -1,0 +1,4 @@
+interface:
+  display_name: "中文公文 Word 格式"
+  short_description: "统一中文公文版式、四级标题规范、正文缩进与快速渲染审计"
+  default_prompt: "使用 $format-official-docx 创建一份含规范四级正文标题的中文公文 Word 文档。"
